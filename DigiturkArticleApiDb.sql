@@ -1,8 +1,6 @@
-
-# Veritabanı Scripti
 USE [master]
 GO
-/****** Object:  Database [DigiTurkArticleDB]    Script Date: 12.08.2020 00:46:01 ******/
+/****** Object:  Database [DigiTurkArticleDB]    Script Date: 12.08.2020 22:52:41 ******/
 CREATE DATABASE [DigiTurkArticleDB]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -89,10 +87,10 @@ ALTER DATABASE SCOPED CONFIGURATION SET QUERY_OPTIMIZER_HOTFIXES = OFF;
 GO
 USE [DigiTurkArticleDB]
 GO
-/****** Object:  Schema [ARTICLE]    Script Date: 12.08.2020 00:46:01 ******/
+/****** Object:  Schema [ARTICLE]    Script Date: 12.08.2020 22:52:42 ******/
 CREATE SCHEMA [ARTICLE]
 GO
-/****** Object:  Table [ARTICLE].[Article]    Script Date: 12.08.2020 00:46:01 ******/
+/****** Object:  Table [ARTICLE].[Article]    Script Date: 12.08.2020 22:52:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
