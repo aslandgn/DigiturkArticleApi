@@ -1,9 +1,8 @@
-﻿using Business.Abstract.ServiceArticle;
+﻿using Business.Helpers.Abstract.ArticlleHelper;
 using Entity.Entities.SchemaArticle;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DigiturkArticleApi.Controllers
@@ -12,11 +11,12 @@ namespace DigiturkArticleApi.Controllers
     [ApiController]
     public class ArticlesController : ControllerBase
     {
-        private readonly IArticleService _articleService;
+        //private readonly IArticleService _articleService;
+        private readonly IArticleHelper _articleHelper;
 
-        public ArticlesController(IArticleService articleService)
+        public ArticlesController(IArticleHelper articleHelper)
         {
-            _articleService = articleService;
+            _articleHelper = articleHelper;
         }
 
         // GET: api/Articles
@@ -25,7 +25,7 @@ namespace DigiturkArticleApi.Controllers
         {
             try
             {
-                return await _articleService.GetList();
+                return await _articleHelper.ReadAllArticles();
 
             }
             catch (Exception e)
@@ -41,8 +41,7 @@ namespace DigiturkArticleApi.Controllers
         {
             try
             {
-                return await _articleService.GetList(x => x.HEADER.Contains(filter));
-
+                return await _articleHelper.GetArticlesByHeader(filter);
             }
             catch (Exception e)
             {
@@ -57,7 +56,7 @@ namespace DigiturkArticleApi.Controllers
         {
             try
             {
-                return await _articleService.GetList(x => x.CONTENT.Contains(filter));
+                return await _articleHelper.GetArticlesByContent(filter);
 
             }
             catch (Exception e)
@@ -73,7 +72,7 @@ namespace DigiturkArticleApi.Controllers
         {
             try
             {
-                return await _articleService.GetList(x => x.HEADER.Contains(filter) || x.CONTENT.Contains(filter));
+                return await _articleHelper.GetArticlesByHeaderAndContent(filter);
 
             }
             catch (Exception e)
@@ -87,7 +86,7 @@ namespace DigiturkArticleApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Article>> GetArticle(int id)
         {
-            var article = await _articleService.Get(x => x.ID == id);
+            var article = await _articleHelper.GetById(id);
 
             if (article == null)
             {
@@ -109,13 +108,9 @@ namespace DigiturkArticleApi.Controllers
                 {
                     return BadRequest();
                 }
-                var entity = await _articleService.Get(x => x.ID == id);
-                entity.HEADER = article.HEADER;
-                entity.CONTENT = article.CONTENT;
-                entity.STATUS = article.STATUS;
                 try
                 {
-                    await _articleService.Update(entity);
+                    await _articleHelper.UpdateArticle(article);
                     return Ok();
                 }
                 catch (Exception e)
@@ -139,7 +134,7 @@ namespace DigiturkArticleApi.Controllers
         {
             try
             {
-                await _articleService.Add(article);
+                await _articleHelper.Add(article);
 
                 return CreatedAtAction("GetArticle", new { id = article.ID }, article);
 
@@ -154,21 +149,16 @@ namespace DigiturkArticleApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Article>> DeleteArticle(int id)
         {
-            var article = await _articleService.Get(x => x.ID == id);
-            if (article == null)
+            try
             {
-                return NotFound();
+                await _articleHelper.Delete(id);
+                return Ok();
             }
+            catch (Exception)
+            {
 
-            await _articleService.Delete(article);
-
-            return Ok();
-        }
-
-        private async Task<bool> ArticleExistsAsync(int id)
-        {
-            var result = await _articleService.GetList(x => x.ID == id);
-            return result.Any();
+                throw;
+            }
         }
     }
 }
